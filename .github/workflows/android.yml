@@ -34,13 +34,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Flet build APK
+    - name: Build APK with Flet
       run: |
-        flet build apk \
-          --project "My Omnis" \
-          --bundle-id "com.example.myomnis" \
-          --build-number 1 \
-          --verbose
+        flet build apk --verbose
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
