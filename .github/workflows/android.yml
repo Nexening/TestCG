@@ -1,50 +1,51 @@
-name: Build Android APK
+name: Build Flet Android APK
 
 on:
-  workflow_dispatch:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
-  build:
+  build-apk:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      # 1. 检出代码
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.11"
+      # 2. 设置 Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
 
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          libgtk-3-dev \
-          libblkid-dev \
-          liblzma-dev \
-          libglu1-mesa \
-          libgstreamer1.0-dev \
-          libgstreamer-plugins-base1.0-dev
+      # 3. 安装 Python 依赖（Flet）
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flet
 
-    - name: Install Python dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        
-    - name: Install Flutter
+      # 4. 安装 Flutter
+      - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: "stable"
 
-    - name: Build APK with Flet
-      run: |
-        flet build apk --verbose
+      # 5. 安装 Android SDK 工具（保证 license 同意）
+      - name: Accept Android licenses
+        run: yes | sdkmanager --licenses || true
 
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: MyOmnis-APK
-        path: build/app/outputs/flutter-apk/*.apk
+      # 6. 构建 APK
+      - name: Build Flet Android APK
+        run: |
+          # 指定 assets_dir 为项目根目录
+          flet build apk --release --assets-dir . --verbose
+
+      # 7. 上传 APK 作为 artifact
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: MyOmnis-release.apk
+          path: ./build/app/outputs/flutter-apk/app-release.apk
