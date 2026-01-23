@@ -40,7 +40,7 @@ jobs:
       # 6. 构建 Android APK
       - name: Build Flet APK
         run: |
-          flet build apk --release --assets-dir . --verbose
+          flet pack apk
 
       # 7. 上传 APK 产物
       - name: Upload APK artifact
