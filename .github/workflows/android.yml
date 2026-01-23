@@ -21,11 +21,11 @@ jobs:
         with:
           python-version: "3.11"
 
-      # 3. 安装 Python 依赖（Flet）
+      # 3. 安装 Python 依赖（指定 Flet 0.22.1）
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flet
+          pip install flet==0.22.1
 
       # 4. 安装 Flutter
       - name: Install Flutter
@@ -33,19 +33,18 @@ jobs:
         with:
           flutter-version: "stable"
 
-      # 5. 安装 Android SDK 工具（保证 license 同意）
+      # 5. 同意 Android SDK License
       - name: Accept Android licenses
         run: yes | sdkmanager --licenses || true
 
-      # 6. 构建 APK
+      # 6. 构建 APK（Release 模式 + assets_dir 指向根目录）
       - name: Build Flet Android APK
         run: |
-          # 指定 assets_dir 为项目根目录
           flet build apk --release --assets-dir . --verbose
 
-      # 7. 上传 APK 作为 artifact
+      # 7. 上传 APK 作为 artifact（使用 actions/upload-artifact v4）
       - name: Upload APK artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: MyOmnis-release.apk
           path: ./build/app/outputs/flutter-apk/app-release.apk
