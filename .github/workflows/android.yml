@@ -24,7 +24,7 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flet==0.22.1
+          pip install flet==0.22.1 pyinstaller
 
       # 4. 安装 Flutter SDK
       - name: Setup Flutter SDK
